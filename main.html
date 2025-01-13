@@ -1,8 +1,17 @@
 <html>
     <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+            crossorigin=""/>
+
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                crossorigin="">
+        </script>
+
         <style>
             body { margin: 0; padding: 0; }
-            #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+            #map { position: absolute; top: 0; bottom: 0; width: 100%; z-index: 1;}
         </style>
         <script defer src="./index.js"></script>
     </head>
@@ -14,11 +23,12 @@
                     Arial,
                     Helvetica,
                     sans-serif;
-                position: absolute;
+                position: relative;
                 width: 25%;
                 top: 0;
                 left: 0;
                 padding: 10px;
+                z-index: 1;
             }
         
             .map-overlay .map-overlay-inner {
@@ -51,19 +61,35 @@
             }
         </style>
 
+        <div id="map"></div>
+
         <div class="map-overlay top">
             <div class="map-overlay-inner">
-                <h2>Significant earthquakes in 2015</h2>
+                <h2>Time Slider</h2>
                 <label id="month"></label>
                 <input id="slider" type="range" min="0" max="11" step="1" value="0">
             </div>
-            <div class="map-overlay-inner">
-                <div id="legend" class="legend">
-                    <div class="bar"></div>
-                    <div>Magnitude (m)</div>
-                </div>
-            </div>
+
         </div>
+
+        <script>
+            var map = L.map('map', {
+                            maxZoom: 20,
+                            minZoom: 6,
+                            zoomControl: false
+                        }).setView([14.6077746, 121.078978], 13);
+
+            L.control.zoom({
+                position: 'topright'
+            }).addTo(map);
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+        </script>
+        
 
         
     </body>
