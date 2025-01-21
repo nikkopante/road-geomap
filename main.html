@@ -73,6 +73,30 @@
         </div>
 
         <script>
+
+            async function fetchData(index) {
+                try {
+                    // Fetch the JSON data from a file
+                    const response = await fetch('sample.json'); // Replace 'data.json' with your JSON file path
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const jsonData = await response.json();
+
+                    if (index >= 0 && index < jsonData.length) {
+                        console.log(jsonData[index]);
+                    } else {
+                        console.error('Index out of range');
+                    }
+                } catch (error) {
+                    console.error('Error fetching or processing JSON:', error);
+                }
+
+            }
+
+            fetchData(1);
+
             var map = L.map('map', {
                             maxZoom: 20,
                             minZoom: 6,
@@ -87,6 +111,12 @@
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
+
+
+            document.getElementById('slider').addEventListener('input', (e) => {
+                const datetime = parseInt(e.target.value, 10);
+                console.log(datetime)
+            });
 
         </script>
         

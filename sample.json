@@ -1,0 +1,26 @@
+[
+    {
+        "datetime": "2024-12-01T01:00:00.00Z",
+        "name": "UP Diliman",
+        "longitude": 121.0685,
+        "latitude": 14.6539
+    },
+    {
+        "datetime": "2024-12-01T02:00:00.00Z",
+        "name": "Ateneo de Manila University",
+        "longitude": 121.0786,
+        "latitude": 14.6396
+    },
+    {
+        "datetime": "2024-12-01T03:00:00.00Z",
+        "name": "De La Salle University Manila",
+        "longitude": 120.9932,
+        "latitude": 14.5648
+    },
+    {
+        "datetime": "2024-12-01T04:00:00.00Z",
+        "name": "University of Santo Thomas",
+        "longitude": 120.9878,
+        "latitude": 14.6107
+    }
+]
