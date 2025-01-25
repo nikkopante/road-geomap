@@ -66,42 +66,41 @@
         <div class="map-overlay top">
             <div class="map-overlay-inner">
                 <h2>Time Slider</h2>
-                <label id="month"></label>
-                <input id="slider" type="range" min="0" max="11" step="1" value="0">
+                <label id="time"></label>
+                <input id="slider" type="range" min="0" max="15" step="1" value="0">
             </div>
 
         </div>
 
         <script>
 
-            async function fetchData(index) {
-                try {
-                    // Fetch the JSON data from a file
-                    const response = await fetch('sample.json'); // Replace 'data.json' with your JSON file path
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const jsonData = await response.json();
-
-                    if (index >= 0 && index < jsonData.length) {
-                        console.log(jsonData[index]);
-                    } else {
-                        console.error('Index out of range');
-                    }
-                } catch (error) {
-                    console.error('Error fetching or processing JSON:', error);
-                }
-
-            }
-
-            fetchData(1);
+            const timeField = [
+                {"label": "05/06/2023 5:00 AM - 05/06/2023 6:00 AM", "dateTime": "2023-05-06T05:00:00.000"},    // 0
+                {"label": "05/06/2023 6:00 AM - 05/06/2023 7:00 AM", "dateTime": "2023-05-06T06:00:00.000"},    // 1
+                {"label": "05/06/2023 7:00 AM - 05/06/2023 8:00 AM", "dateTime": "2023-05-06T07:00:00.000"},    // 2
+                {"label": "05/06/2023 8:00 AM - 05/06/2023 9:00 AM", "dateTime": "2023-05-06T08:00:00.000"},    // 3
+                {"label": "05/06/2023 9:00 AM - 05/06/2023 10:00 AM", "dateTime": "2023-05-06T09:00:00.000"},   // 4
+                {"label": "05/06/2023 10:00 AM - 05/06/2023 11:00 AM", "dateTime": "2023-05-06T10:00:00.000"}, // 5
+                {"label": "05/06/2023 11:00 AM - 05/06/2023 12:00 PM", "dateTime": "2023-05-06T11:00:00.000"}, // 6
+                {"label": "05/06/2023 12:00 PM - 05/06/2023 1:00 PM", "dateTime": "2023-05-06T12:00:00.000"},  // 7
+                {"label": "05/06/2023 1:00 PM - 05/06/2023 2:00 PM", "dateTime": "2023-05-06T13:00:00.000"},   // 8
+                {"label": "05/06/2023 2:00 PM - 05/06/2023 3:00 PM", "dateTime": "2023-05-06T14:00:00.000"},   // 9
+                {"label": "05/06/2023 3:00 PM - 05/06/2023 4:00 PM", "dateTime": "2023-05-06T15:00:00.000"},   // 10
+                {"label": "05/06/2023 4:00 PM - 05/06/2023 5:00 PM", "dateTime": "2023-05-06T16:00:00.000"},   // 11
+                {"label": "05/06/2023 5:00 PM - 05/06/2023 6:00 PM", "dateTime": "2023-05-06T17:00:00.000"},   // 12
+                {"label": "05/06/2023 6:00 PM - 05/06/2023 7:00 PM", "dateTime": "2023-05-06T18:00:00.000"},   // 13
+                {"label": "05/06/2023 7:00 PM - 05/06/2023 8:00 PM", "dateTime": "2023-05-06T19:00:00.000"},   // 14
+                {"label": "05/06/2023 8:00 PM - 05/06/2023 9:00 PM", "dateTime": "2023-05-06T20:00:00.000"},   // 15
+                {"label": "05/06/2023 9:00 PM - 05/06/2023 10:00 PM", "dateTime": "2023-05-06T21:00:00.000"},  // 16
+                {"label": "05/06/2023 10:00 PM - 05/06/2023 11:00 PM", "dateTime": "2023-05-06T22:00:00.000"}, // 17
+                {"label": "05/06/2023 11:00 PM - 05/06/2023 12:00 AM", "dateTime": "2023-05-06T23:00:00.000"}, // 18
+            ]
 
             var map = L.map('map', {
                             maxZoom: 20,
                             minZoom: 6,
                             zoomControl: false
-                        }).setView([14.6077746, 121.078978], 13);
+                        }).setView([10.76976389, 106.7003694], 13);
 
             L.control.zoom({
                 position: 'topright'
@@ -113,10 +112,68 @@
             }).addTo(map);
 
 
-            document.getElementById('slider').addEventListener('input', (e) => {
-                const datetime = parseInt(e.target.value, 10);
-                console.log(datetime)
+            let geojsonLayer;
+            function styleFeature(feature) {
+                return {
+                    radius: 8,
+                    fillColor: "blue",
+                    color: "#000",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                };
+            }
+
+            var geojsonData;
+            fetch('https://raw.githubusercontent.com/nikkopante/road-classification/refs/heads/main/road_use_classification.geojson')
+                .then(res => res.json())
+                .then(data => {
+                    geojsonData = data;
+                });
+
+            function filterData(time) {
+                if (geojsonLayer) {
+                    map.removeLayer(geojsonLayer);
+                }
+
+                geojsonLayer = L.geoJSON(geojsonData, {
+                    filter: function(feature) {
+                        const datetimeObj = new Date(time);
+                        // date.setHours(date.getHours() + 1) // Add 1 hour
+                        // console.log(time, date.toISOString())
+                        // return feature.properties.DateTime <= threshold;
+                        console.log(time, datetimeObj.toISOString())
+                        return feature.properties.DateTime >= time;
+                    },
+                    pointToLayer: function(feature, latlng) {
+                        return L.circleMarker(latlng, styleFeature(feature));
+                    }
+                });
+
+                geojsonLayer.addTo(map);
+            }
+
+
+            const slider = document.getElementById('slider');
+            const sliderValueDisplay = document.getElementById('time');
+
+            function filterBy(time) {
+                const filters = ['==', 'month', month];
+                map.setFilter('earthquake-circles', filters);
+                map.setFilter('earthquake-labels', filters);
+
+                // Set the label to the month
+                sliderValueDisplay.textContent = timeField[0].label;
+            }
+
+            slider.addEventListener('input', (e) => {
+                const sliderValue = parseInt(slider.value);
+                const time = timeField[sliderValue].dateTime
+                sliderValueDisplay.textContent = timeField[sliderValue].label;
+                filterData(time);
             });
+
+            filterData(timeField[0].dateTime);
 
         </script>
         
