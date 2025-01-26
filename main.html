@@ -74,33 +74,20 @@
 
         <script>
 
-            const timeField = [
-                {"label": "05/06/2023 5:00 AM - 05/06/2023 6:00 AM", "dateTime": "05/06/2023 05:00:00.000"},    // 0
-                {"label": "05/06/2023 6:00 AM - 05/06/2023 7:00 AM", "dateTime": "05/06/2023 06:00:00.000"},    // 1
-                {"label": "05/06/2023 7:00 AM - 05/06/2023 8:00 AM", "dateTime": "05/06/2023 07:00:00.000"},    // 2
-                {"label": "05/06/2023 8:00 AM - 05/06/2023 9:00 AM", "dateTime": "05/06/2023 08:00:00.000"},    // 3
-                {"label": "05/06/2023 9:00 AM - 05/06/2023 10:00 AM", "dateTime": "05/06/2023 09:00:00.000"},   // 4
-                {"label": "05/06/2023 10:00 AM - 05/06/2023 11:00 AM", "dateTime": "05/06/2023 10:00:00.000"}, // 5
-                {"label": "05/06/2023 11:00 AM - 05/06/2023 12:00 PM", "dateTime": "05/06/2023 11:00:00.000"}, // 6
-                {"label": "05/06/2023 12:00 PM - 05/06/2023 1:00 PM", "dateTime": "05/06/2023 12:00:00.000"},  // 7
-                {"label": "05/06/2023 1:00 PM - 05/06/2023 2:00 PM", "dateTime": "05/06/2023 13:00:00.000"},   // 8
-                {"label": "05/06/2023 2:00 PM - 05/06/2023 3:00 PM", "dateTime": "05/06/2023 14:00:00.000"},   // 9
-                {"label": "05/06/2023 3:00 PM - 05/06/2023 4:00 PM", "dateTime": "05/06/2023 15:00:00.000"},   // 10
-                {"label": "05/06/2023 4:00 PM - 05/06/2023 5:00 PM", "dateTime": "05/06/2023 16:00:00.000"},   // 11
-                {"label": "05/06/2023 5:00 PM - 05/06/2023 6:00 PM", "dateTime": "05/06/2023 17:00:00.000"},   // 12
-                {"label": "05/06/2023 6:00 PM - 05/06/2023 7:00 PM", "dateTime": "05/06/2023 18:00:00.000"},   // 13
-                {"label": "05/06/2023 7:00 PM - 05/06/2023 8:00 PM", "dateTime": "05/06/2023 19:00:00.000"},   // 14
-                {"label": "05/06/2023 8:00 PM - 05/06/2023 9:00 PM", "dateTime": "05/06/2023 20:00:00.000"},   // 15
-                {"label": "05/06/2023 9:00 PM - 05/06/2023 10:00 PM", "dateTime": "05/06/2023 21:00:00.000"},  // 16
-                {"label": "05/06/2023 10:00 PM - 05/06/2023 11:00 PM", "dateTime": "05/06/2023 22:00:00.000"}, // 17
-                {"label": "05/06/2023 11:00 PM - 05/06/2023 12:00 AM", "dateTime": "05/06/2023 23:00:00.000"}, // 18
-            ]
+            var timeIntervals;
+            fetch('https://raw.githubusercontent.com/nikkopante/road-geomap/refs/heads/main/hourly_intervals.json')
+                .then(res => res.json())
+                .then(data => {
+                    timeIntervals = data;
+                    sliderValueDisplay.textContent = timeIntervals[0].startdate
+                });
+
 
             var map = L.map('map', {
                             maxZoom: 20,
                             minZoom: 6,
                             zoomControl: false
-                        }).setView([10.76976389, 106.7003694], 13);
+                        }).setView([10.76976389, 106.7003694], 18);
 
             L.control.zoom({
                 position: 'topright'
@@ -116,69 +103,60 @@
             function styleFeature(feature) {
                 return {
                     radius: 8,
-                    fillColor: "blue",
                     color: "#000",
                     weight: 1,
                     opacity: 1,
-                    fillOpacity: 0.8
+                    fillOpacity: 1
                 };
             }
 
             var geojsonData;
-            fetch('https://raw.githubusercontent.com/nikkopante/road-classification/refs/heads/main/road_use_classification.geojson')
+            fetch('https://raw.githubusercontent.com/nikkopante/road-geomap/refs/heads/main/road_use_classification.geojson')
                 .then(res => res.json())
                 .then(data => {
                     geojsonData = data;
+                    filterData(0);
                 });
 
-            function filterData(time) {
+            function filterData(sliderValue) {
                 if (geojsonLayer) {
                     map.removeLayer(geojsonLayer);
                 }
-
                 geojsonLayer = L.geoJSON(geojsonData, {
                     filter: function(feature) {
-                        const datetimeObj = new Date(time);
-                        // date.setHours(date.getHours() + 1) // Add 1 hour
-                        // console.log(time, date.toISOString())
-                        // return feature.properties.DateTime <= threshold;
-                        // console.log(time, datetimeObj.toISOString())
-                        console.log("DateTime", time, datetimeObj.toISOString())
-                        return feature.properties.DateTime >= time;
+                        console.log(timeIntervals[sliderValue].startdate, timeIntervals[sliderValue].enddate)
+                        return feature.properties.DateTime >= timeIntervals[sliderValue].startdate && 
+                                feature.properties.DateTime <= timeIntervals[sliderValue].enddate;
                     },
                     pointToLayer: function(feature, latlng) {
                         return L.circleMarker(latlng, styleFeature(feature));
+                    },
+                    style: function(feature) {
+                        switch (feature.properties.Classification) {
+                            case 'Motorcycle Taxis': return {fillColor: "#ffb3ba"};
+                            case 'Shop Spillover':   return {fillColor: "#ffdfba"};
+                            case 'Physical Objects': return {fillColor: "#ffffba"};
+                            case 'Leisure':   return {fillColor: "#baffc9"};
+                            case 'Services': return {fillColor: "#bae1ff"};
+                            case 'Food Stands':   return {fillColor: "#daffe7"};
+                            case 'Merchandise': return {fillColor: "#e0d6ff"};
+                            case 'Sidewalk Cafes':   return {fillColor: "#5a5255"};
+                            case 'Others':   return {fillColor: "#1b85b8"};
+                        }
                     }
                 });
-
                 geojsonLayer.addTo(map);
             }
-
 
             const slider = document.getElementById('slider');
             const sliderValueDisplay = document.getElementById('time');
 
-            function filterBy(time) {
-                // const filters = ['==', 'month', month];
-                // map.setFilter('earthquake-circles', filters);
-                // map.setFilter('earthquake-labels', filters);
-
-                // Set the label to the month
-                sliderValueDisplay.textContent = timeField[0].label;
-            }
-
             slider.addEventListener('input', (e) => {
                 const sliderValue = parseInt(slider.value);
-                const time = timeField[sliderValue].dateTime
-                sliderValueDisplay.textContent = timeField[sliderValue].label;
-                filterData(time);
+                sliderValueDisplay.textContent = timeIntervals[sliderValue].startdate;
+                filterData(sliderValue);
             });
 
-            filterData(timeField[0].dateTime);
-
         </script>
-        
-
-        
     </body>
 </html>
