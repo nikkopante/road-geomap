@@ -70,7 +70,7 @@ We can add our dataset in the map to see if our data works. We will also add fun
 ```
 #### 4. Add a slider.
 
-The slider will control or filter what shows on the map. The slider must output its value in the console.
+The slider will control or filter what shows on the map. To test this, you check the console of the browser.
 
 ```html
 <body>
@@ -94,9 +94,98 @@ The slider will control or filter what shows on the map. The slider must output 
         slider.addEventListener('input', (e) => {
             const sliderValue = parseInt(slider.value);
             sliderValueDisplay.textContent = sliderValue;
+            console.log("slider value", sliderValue) // To test if our browser reads the index of our slider
         });
         
 
+    </script>
+</body>
+```
+
+#### 5. Filter the dataset based on time
+To filter the dataset, we have to make a function that is in sync with the time slider. In order to do this we have to make another dataset of datetime intervals. This can be hardcoded in the codebase `main.html` but it can also be separate file such as JSON. I have an `hourly_intervals.json` in this repo with this list of dictionary. The startdate and enddate can be used to filter what subset from our GeoJSON coincides with a time interval.
+```json
+[
+    {
+        "startdate":"2023-05-06T05:00:00",
+        "enddate":"2023-05-06T06:00:00"
+    },
+    {
+        "startdate":"2023-05-06T06:00:00",
+        "enddate":"2023-05-06T07:00:00"
+    },
+]
+```
+
+Now we have to make it work with our time slider. Each time interval has an index beginning from 0, 1, 2, and so on. We also have to use fetch just like in our GeoJSON to get the data stream. 
+```html
+<body>
+
+    <script>
+        var timeIntervals;
+        fetch('https://raw.githubusercontent.com/nikkopante/road-geomap/refs/heads/main/hourly_intervals.json')
+            .then(res => res.json())
+            .then(data => {
+                timeIntervals = data;
+                sliderValueDisplay.textContent = timeIntervals[0].startdate // Set initial display to index 0
+            });
+
+        slider.addEventListener('input', (e) => {
+            const sliderValue = parseInt(slider.value);
+            sliderValueDisplay.textContent = sliderValue;
+        });
+        
+    </script>
+</body>
+```
+
+The GeoJSON layer `var geojsonLayer;` is responsible for controlling what dataset is to show on our map. We have to wrap it inside a function that filters dataset based on time.
+```html
+<body>
+    <script>
+
+            var geojsonLayer;
+            function styleFeature(feature) {
+                return {
+                    radius: 8,
+                    color: "#000",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 1
+                };
+            }
+
+            var geojsonData;
+            fetch('https://raw.githubusercontent.com/nikkopante/road-geomap/refs/heads/main/road_use_classification.geojson')
+                .then(res => res.json())
+                .then(data => {
+                    geojsonData = data;
+                    filterData(0); // Initially filter our dataset using time interval index 0
+                });
+
+            function filterData(sliderValue) {
+                if (geojsonLayer) {
+                    map.removeLayer(geojsonLayer);
+                }
+                geojsonLayer = L.geoJSON(geojsonData, {
+                    filter: function(feature) {
+                        console.log(timeIntervals[sliderValue].startdate, timeIntervals[sliderValue].enddate)
+                        return feature.properties.DateTime >= timeIntervals[sliderValue].startdate && 
+                                feature.properties.DateTime <= timeIntervals[sliderValue].enddate;
+                    },
+                    pointToLayer: function(feature, latlng) {
+                        return L.circleMarker(latlng, styleFeature(feature));
+                    },
+                });
+                geojsonLayer.addTo(map);
+            }
+
+        slider.addEventListener('input', (e) => {
+            const sliderValue = parseInt(slider.value);
+            sliderValueDisplay.textContent = sliderValue;
+            filterData(sliderValue); // Call our function everytime the slider change its value
+        });
+        
     </script>
 </body>
 ```
