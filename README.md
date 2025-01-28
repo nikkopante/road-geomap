@@ -70,7 +70,7 @@ We can add our dataset in the map to see if our data works. We will also add fun
 ```
 #### 4. Add a slider.
 
-The slider will control or filter what shows on the map. To test this, you check the console of the browser.
+The slider will control or filter what shows on the map. To test this, you check the console of the browser. For now, we can instantiate a working slider that prints its index value at any given point.
 
 ```html
 <body>
