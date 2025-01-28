@@ -139,7 +139,7 @@ Now we have to make it work with our time slider. Each time interval has an inde
 </body>
 ```
 
-The GeoJSON layer `var geojsonLayer;` is responsible for controlling what dataset is to show on our map. We have to wrap it inside a function that filters dataset based on time.
+The GeoJSON layer `var geojsonLayer;` is responsible for controlling what dataset to show on our map. We have to wrap it inside a function that filters dataset based on time.
 ```html
 <body>
     <script>
