@@ -5,10 +5,10 @@
 
 
 ### How to make this web map?
-1. Establish dataset.
+#### 1. Establish dataset.
 
 Make a GeoJSON that represents the data. It must have the attribute `geometry` and can be generated using the latitude and longitude of the dataset. The GeoJSON can also have other attritubutes such as classification, datetime, and the link of the image.
-2. Start a leaflet project.
+#### 2. Start a leaflet project.
 
 Leaflet is used to create interactive web maps. It can be used to display map data and create customized dynamic mapping applications. We can start by creating a folder that contains an `.html` file. This will contain our codebase. We can start a simple leaflet project by adding a map layer and add a marker.
 
@@ -40,7 +40,7 @@ Leaflet is used to create interactive web maps. It can be used to display map da
 </body>
 </html>
 ```
-3. Load the dataset.
+#### 3. Load the dataset.
 
 We can add our dataset in the map to see if our data works. We will also add function later once we can properly load our data in the map. We can remove our marker at this point. The output of this step must show points on the map of the locations of the dataset.
 
@@ -68,7 +68,7 @@ We can add our dataset in the map to see if our data works. We will also add fun
     </script>
 </body>
 ```
-4. Add a slider.
+#### 4. Add a slider.
 
 The slider will control or filter what shows on the map. The slider must output its value in the console.
 
@@ -90,7 +90,7 @@ The slider will control or filter what shows on the map. The slider must output 
         const sliderValueDisplay = document.getElementById('time');
 
         sliderValueDisplay.textContent = parseInt(slider.value)
-        
+
         slider.addEventListener('input', (e) => {
             const sliderValue = parseInt(slider.value);
             sliderValueDisplay.textContent = sliderValue;
