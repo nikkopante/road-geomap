@@ -45,10 +45,8 @@
                 margin: 0 0 10px;
             }
         
-            .map-overlay .legend .bar {
-                height: 10px;
+            .map-overlay .legend .picture {
                 width: 100%;
-                background: linear-gradient(to right, #fca107, #7f3121);
             }
         
             .map-overlay input {
@@ -69,7 +67,12 @@
                 <label id="time"></label>
                 <input id="slider" type="range" min="0" max="15" step="1" value="0">
             </div>
-
+            <div class="map-overlay-inner">
+                <div id="legend" class="legend">
+                    <img class="picture" src="IMG_3880.HEIC" alt="sample" />
+                    <div>Classification: Leisure</div>
+                </div>
+            </div>
         </div>
 
         <script>
@@ -124,7 +127,6 @@
                 }
                 geojsonLayer = L.geoJSON(geojsonData, {
                     filter: function(feature) {
-                        console.log(timeIntervals[sliderValue].startdate, timeIntervals[sliderValue].enddate)
                         return feature.properties.DateTime >= timeIntervals[sliderValue].startdate && 
                                 feature.properties.DateTime <= timeIntervals[sliderValue].enddate;
                     },
@@ -133,15 +135,15 @@
                     },
                     style: function(feature) {
                         switch (feature.properties.Classification) {
-                            case 'Motorcycle Taxis': return {fillColor: "#ffb3ba"};
-                            case 'Shop Spillover':   return {fillColor: "#ffdfba"};
-                            case 'Physical Objects': return {fillColor: "#ffffba"};
-                            case 'Leisure':   return {fillColor: "#baffc9"};
-                            case 'Services': return {fillColor: "#bae1ff"};
-                            case 'Food Stands':   return {fillColor: "#daffe7"};
-                            case 'Merchandise': return {fillColor: "#e0d6ff"};
-                            case 'Sidewalk Cafes':   return {fillColor: "#5a5255"};
-                            case 'Others':   return {fillColor: "#1b85b8"};
+                            case 'Motorcycle Taxis': return {fillColor: "#e81416"};
+                            case 'Shop Spillover':   return {fillColor: "#ffa500"};
+                            case 'Physical Objects': return {fillColor: "#faeb36"};
+                            case 'Leisure':   return {fillColor: "#79c314"};
+                            case 'Services': return {fillColor: "#487de7"};
+                            case 'Food Stands':   return {fillColor: "#4b369d"};
+                            case 'Merchandise': return {fillColor: "#70369d"};
+                            case 'Sidewalk Cafes':   return {fillColor: "#ffc6ff"};
+                            case 'Others':   return {fillColor: "#eaeaea"};
                         }
                     }
                 });
