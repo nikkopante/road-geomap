@@ -30,6 +30,30 @@
                 padding: 10px;
                 z-index: 1;
             }
+
+            .bottom-overlay {
+                font:
+                    12px/20px 'Helvetica Neue',
+                    Arial,
+                    Helvetica,
+                    sans-serif;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                
+                text-align: center;
+                padding: 10px;
+                z-index: 1;
+            }
+
+            .bottom-overlay .bottom-overlay-inner {
+                background-color: #fff;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                border-radius: 3px;
+                padding: 10px;
+                margin-bottom: 10px;
+            }
         
             .map-overlay .map-overlay-inner {
                 background-color: #fff;
@@ -67,11 +91,11 @@
                 <label id="time"></label>
                 <input id="slider" type="range" min="0" max="15" step="1" value="0">
             </div>
-            <div class="map-overlay-inner">
-                <div id="legend" class="legend">
-                    <img class="picture" src="IMG_3880.HEIC" alt="sample" />
-                    <div>Classification: Leisure</div>
-                </div>
+        </div>
+
+        <div class="bottom-overlay bottom">
+            <div class="bottom-overlay-inner">
+                <h2>Example</h2>
             </div>
         </div>
 

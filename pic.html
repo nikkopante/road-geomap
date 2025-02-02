@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panoramic Image Slider</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+        }
+        .content {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+        }
+        .slider-wrapper {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: black;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+        }
+        .slider-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            display: flex;
+            scrollbar-width: thin;
+            scrollbar-color: #888 #444;
+        }
+        .slider-container img {
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Welcome to My Panoramic Page</h1>
+        <p>Enjoy the horizontal slider for the panoramic image below.</p>
+    </div>
+    <div class="slider-wrapper">
+        <div class="slider-container">
+            <img src="3-SE.png" alt="Panoramic View">
+            <img src="3-SE.png" alt="Panoramic View">
+        </div>
+    </div>
+</body>
+</html>
